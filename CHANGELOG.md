@@ -1,0 +1,23 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.1.0] - 2026-04-01
+
+### Added
+- `ColorToken` with RGBA values and hex string parsing/serialization
+- `SpacingToken` for consistent spacing values
+- `TypographyToken` with font size, weight, line height, and letter spacing
+- `ShadowToken` with color, radius, offsets, and opacity
+- `BorderToken` with width, color, and border style (solid, dashed, dotted)
+- `Theme` class with named token maps and lookup methods
+- Theme merging and extending for composable design systems
+- `ThemeManager` for registering, switching, and observing theme changes
+- `TokenExporter` for JSON round-trip serialization and deserialization
+- `TokenValidator` for validating themes against required token sets
+- Zero external dependencies

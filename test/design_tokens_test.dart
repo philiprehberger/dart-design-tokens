@@ -1,0 +1,455 @@
+import 'package:test/test.dart';
+import 'package:philiprehberger_design_tokens/design_tokens.dart';
+
+void main() {
+  group('ColorToken', () {
+    test('creates from RGBA values', () {
+      const color = ColorToken(red: 1.0, green: 0.5, blue: 0.0);
+      expect(color.red, 1.0);
+      expect(color.green, 0.5);
+      expect(color.blue, 0.0);
+      expect(color.alpha, 1.0);
+    });
+
+    test('parses 6-digit hex', () {
+      final color = ColorToken.fromHex('#FF8000');
+      expect(color.red, 1.0);
+      expect(color.green, closeTo(0.502, 0.01));
+      expect(color.blue, 0.0);
+    });
+
+    test('parses 3-digit hex', () {
+      final color = ColorToken.fromHex('#F80');
+      expect(color.red, 1.0);
+      expect(color.green, closeTo(0.533, 0.01));
+      expect(color.blue, 0.0);
+    });
+
+    test('parses 8-digit hex with alpha', () {
+      final color = ColorToken.fromHex('#FF800080');
+      expect(color.alpha, closeTo(0.502, 0.01));
+    });
+
+    test('parses hex without hash prefix', () {
+      final color = ColorToken.fromHex('FF0000');
+      expect(color.red, 1.0);
+      expect(color.green, 0.0);
+      expect(color.blue, 0.0);
+    });
+
+    test('throws on invalid hex', () {
+      expect(() => ColorToken.fromHex('#ZZZZZZ'), throwsFormatException);
+    });
+
+    test('throws on wrong length hex', () {
+      expect(() => ColorToken.fromHex('#ABCD'), throwsFormatException);
+    });
+
+    test('converts to hex string', () {
+      const color = ColorToken(red: 1.0, green: 0.0, blue: 0.0);
+      expect(color.toHex(), '#ff0000');
+    });
+
+    test('converts to hex with alpha', () {
+      const color = ColorToken(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.5);
+      expect(color.toHex(includeAlpha: true), '#ff000080');
+    });
+
+    test('round-trips through JSON', () {
+      const original = ColorToken(red: 0.2, green: 0.4, blue: 0.6, alpha: 0.8);
+      final restored = ColorToken.fromJson(original.toJson());
+      expect(restored, equals(original));
+    });
+  });
+
+  group('SpacingToken', () {
+    test('creates with value', () {
+      const token = SpacingToken(value: 16.0);
+      expect(token.value, 16.0);
+    });
+
+    test('round-trips through JSON', () {
+      const original = SpacingToken(value: 24.0);
+      final restored = SpacingToken.fromJson(original.toJson());
+      expect(restored, equals(original));
+    });
+  });
+
+  group('TypographyToken', () {
+    test('creates with required fields', () {
+      const token = TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular);
+      expect(token.fontSize, 16.0);
+      expect(token.fontWeight, FontWeight.regular);
+      expect(token.lineHeight, isNull);
+      expect(token.letterSpacing, isNull);
+    });
+
+    test('creates with optional fields', () {
+      const token = TypographyToken(
+        fontSize: 24.0,
+        fontWeight: FontWeight.bold,
+        lineHeight: 1.5,
+        letterSpacing: 0.5,
+      );
+      expect(token.lineHeight, 1.5);
+      expect(token.letterSpacing, 0.5);
+    });
+
+    test('round-trips through JSON', () {
+      const original = TypographyToken(
+        fontSize: 14.0,
+        fontWeight: FontWeight.semibold,
+        lineHeight: 1.4,
+      );
+      final restored = TypographyToken.fromJson(original.toJson());
+      expect(restored, equals(original));
+    });
+  });
+
+  group('ShadowToken', () {
+    test('creates with all fields', () {
+      const color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
+      const token = ShadowToken(
+        color: color,
+        radius: 8.0,
+        xOffset: 2.0,
+        yOffset: 4.0,
+        opacity: 0.25,
+      );
+      expect(token.radius, 8.0);
+      expect(token.xOffset, 2.0);
+      expect(token.yOffset, 4.0);
+      expect(token.opacity, 0.25);
+    });
+
+    test('defaults opacity to 1.0', () {
+      const color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
+      const token = ShadowToken(color: color, radius: 4.0, xOffset: 0.0, yOffset: 2.0);
+      expect(token.opacity, 1.0);
+    });
+
+    test('round-trips through JSON', () {
+      const color = ColorToken(red: 0.1, green: 0.2, blue: 0.3);
+      const original = ShadowToken(
+        color: color,
+        radius: 10.0,
+        xOffset: 1.0,
+        yOffset: 3.0,
+        opacity: 0.5,
+      );
+      final restored = ShadowToken.fromJson(original.toJson());
+      expect(restored, equals(original));
+    });
+  });
+
+  group('BorderToken', () {
+    test('creates with all fields', () {
+      const color = ColorToken(red: 0.5, green: 0.5, blue: 0.5);
+      const token = BorderToken(width: 2.0, color: color, style: BorderStyle.dashed);
+      expect(token.width, 2.0);
+      expect(token.style, BorderStyle.dashed);
+    });
+
+    test('defaults style to solid', () {
+      const color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
+      const token = BorderToken(width: 1.0, color: color);
+      expect(token.style, BorderStyle.solid);
+    });
+
+    test('round-trips through JSON', () {
+      const color = ColorToken(red: 1.0, green: 0.0, blue: 0.0);
+      const original = BorderToken(width: 3.0, color: color, style: BorderStyle.dotted);
+      final restored = BorderToken.fromJson(original.toJson());
+      expect(restored, equals(original));
+    });
+  });
+
+  group('Theme', () {
+    late Theme theme;
+
+    setUp(() {
+      theme = Theme(
+        name: 'light',
+        colors: {
+          'primary': ColorToken.fromHex('#3366FF'),
+          'background': ColorToken.fromHex('#FFFFFF'),
+        },
+        spacings: {
+          'sm': const SpacingToken(value: 8.0),
+          'md': const SpacingToken(value: 16.0),
+        },
+        typographies: {
+          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+        },
+        shadows: {
+          'card': ShadowToken(
+            color: ColorToken.fromHex('#000000'),
+            radius: 4.0,
+            xOffset: 0.0,
+            yOffset: 2.0,
+            opacity: 0.1,
+          ),
+        },
+        borders: {
+          'default': BorderToken(
+            width: 1.0,
+            color: ColorToken.fromHex('#CCCCCC'),
+          ),
+        },
+      );
+    });
+
+    test('looks up color token', () {
+      expect(theme.color('primary'), isNotNull);
+      expect(theme.color('primary')!.toHex(), '#3366ff');
+    });
+
+    test('looks up spacing token', () {
+      expect(theme.spacing('md')!.value, 16.0);
+    });
+
+    test('looks up typography token', () {
+      expect(theme.typography('body')!.fontSize, 16.0);
+    });
+
+    test('looks up shadow token', () {
+      expect(theme.shadow('card')!.radius, 4.0);
+    });
+
+    test('looks up border token', () {
+      expect(theme.border('default')!.width, 1.0);
+    });
+
+    test('returns null for missing token', () {
+      expect(theme.color('nonexistent'), isNull);
+      expect(theme.spacing('nonexistent'), isNull);
+      expect(theme.typography('nonexistent'), isNull);
+      expect(theme.shadow('nonexistent'), isNull);
+      expect(theme.border('nonexistent'), isNull);
+    });
+
+    test('merges two themes', () {
+      final dark = Theme(
+        name: 'dark',
+        colors: {
+          'primary': ColorToken.fromHex('#6699FF'),
+          'background': ColorToken.fromHex('#1A1A1A'),
+        },
+        spacings: {
+          'lg': const SpacingToken(value: 32.0),
+        },
+      );
+
+      final merged = theme.merging(dark);
+      expect(merged.name, 'dark');
+      expect(merged.color('primary')!.toHex(), '#6699ff');
+      expect(merged.color('background')!.toHex(), '#1a1a1a');
+      expect(merged.spacing('sm')!.value, 8.0);
+      expect(merged.spacing('lg')!.value, 32.0);
+    });
+
+    test('extends a theme', () {
+      final extended = theme.extending(
+        colors: {'accent': ColorToken.fromHex('#FF6633')},
+      );
+      expect(extended.name, 'light');
+      expect(extended.color('primary'), isNotNull);
+      expect(extended.color('accent'), isNotNull);
+    });
+  });
+
+  group('ThemeManager', () {
+    late ThemeManager manager;
+    late Theme lightTheme;
+    late Theme darkTheme;
+
+    setUp(() {
+      manager = ThemeManager();
+      lightTheme = const Theme(name: 'light');
+      darkTheme = const Theme(name: 'dark');
+    });
+
+    test('registers themes', () {
+      manager.register(lightTheme);
+      manager.register(darkTheme);
+      expect(manager.availableThemes, containsAll(['light', 'dark']));
+    });
+
+    test('switches active theme', () {
+      manager.register(lightTheme);
+      manager.switchTo('light');
+      expect(manager.activeTheme?.name, 'light');
+    });
+
+    test('throws on switching to unregistered theme', () {
+      expect(() => manager.switchTo('unknown'), throwsArgumentError);
+    });
+
+    test('has no active theme initially', () {
+      expect(manager.activeTheme, isNull);
+    });
+
+    test('notifies onChange listeners', () {
+      manager.register(lightTheme);
+      manager.register(darkTheme);
+
+      final changes = <String>[];
+      manager.onChange((theme) => changes.add(theme.name));
+
+      manager.switchTo('light');
+      manager.switchTo('dark');
+      expect(changes, ['light', 'dark']);
+    });
+  });
+
+  group('TokenExporter', () {
+    late TokenExporter exporter;
+
+    setUp(() {
+      exporter = TokenExporter();
+    });
+
+    test('exports and imports JSON round-trip', () {
+      final theme = Theme(
+        name: 'test',
+        colors: {
+          'primary': ColorToken.fromHex('#FF0000'),
+          'secondary': ColorToken.fromHex('#00FF00'),
+        },
+        spacings: {
+          'sm': const SpacingToken(value: 4.0),
+        },
+        typographies: {
+          'heading': const TypographyToken(
+            fontSize: 32.0,
+            fontWeight: FontWeight.bold,
+            lineHeight: 1.2,
+          ),
+        },
+        shadows: {
+          'elevated': ShadowToken(
+            color: ColorToken.fromHex('#000000'),
+            radius: 16.0,
+            xOffset: 0.0,
+            yOffset: 8.0,
+            opacity: 0.2,
+          ),
+        },
+        borders: {
+          'thin': BorderToken(
+            width: 1.0,
+            color: ColorToken.fromHex('#CCCCCC'),
+            style: BorderStyle.solid,
+          ),
+        },
+      );
+
+      final json = exporter.exportJson(theme);
+      final restored = exporter.importJson(json);
+
+      expect(restored.name, 'test');
+      expect(restored.color('primary')!.toHex(), '#ff0000');
+      expect(restored.color('secondary')!.toHex(), '#00ff00');
+      expect(restored.spacing('sm')!.value, 4.0);
+      expect(restored.typography('heading')!.fontSize, 32.0);
+      expect(restored.shadow('elevated')!.radius, 16.0);
+      expect(restored.border('thin')!.width, 1.0);
+    });
+
+    test('serializes and deserializes bytes', () {
+      final theme = Theme(
+        name: 'bytes-test',
+        colors: {'red': ColorToken.fromHex('#FF0000')},
+      );
+
+      final bytes = exporter.serialize(theme);
+      final restored = exporter.deserialize(bytes);
+
+      expect(restored.name, 'bytes-test');
+      expect(restored.color('red')!.toHex(), '#ff0000');
+    });
+  });
+
+  group('TokenValidator', () {
+    late TokenValidator validator;
+
+    setUp(() {
+      validator = TokenValidator();
+    });
+
+    test('passes valid theme with all required tokens', () {
+      final theme = Theme(
+        name: 'valid',
+        colors: {
+          'primary': ColorToken.fromHex('#FF0000'),
+          'background': ColorToken.fromHex('#FFFFFF'),
+        },
+        spacings: {
+          'sm': const SpacingToken(value: 8.0),
+        },
+        typographies: {
+          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+        },
+      );
+
+      final issues = validator.validate(
+        theme,
+        requiredColors: ['primary', 'background'],
+        requiredSpacing: ['sm'],
+        requiredTypography: ['body'],
+      );
+
+      expect(issues, isEmpty);
+    });
+
+    test('reports missing required color tokens', () {
+      const theme = Theme(name: 'incomplete', colors: {});
+
+      final issues = validator.validate(
+        theme,
+        requiredColors: ['primary', 'accent'],
+      );
+
+      final errors = issues.where((i) => i.severity == Severity.error).toList();
+      expect(errors, hasLength(2));
+      expect(errors[0].message, contains('primary'));
+      expect(errors[1].message, contains('accent'));
+    });
+
+    test('reports missing required spacing tokens', () {
+      const theme = Theme(name: 'incomplete');
+
+      final issues = validator.validate(
+        theme,
+        requiredSpacing: ['md'],
+      );
+
+      final errors = issues.where((i) => i.severity == Severity.error).toList();
+      expect(errors.any((i) => i.message.contains('md')), isTrue);
+    });
+
+    test('reports missing required typography tokens', () {
+      const theme = Theme(name: 'incomplete');
+
+      final issues = validator.validate(
+        theme,
+        requiredTypography: ['heading'],
+      );
+
+      final errors = issues.where((i) => i.severity == Severity.error).toList();
+      expect(errors.any((i) => i.message.contains('heading')), isTrue);
+    });
+
+    test('warns on empty token maps', () {
+      const theme = Theme(name: 'empty');
+
+      final issues = validator.validate(theme);
+
+      final warnings = issues.where((i) => i.severity == Severity.warning).toList();
+      expect(warnings, hasLength(3));
+      expect(warnings.any((i) => i.message.contains('color')), isTrue);
+      expect(warnings.any((i) => i.message.contains('spacing')), isTrue);
+      expect(warnings.any((i) => i.message.contains('typography')), isTrue);
+    });
+  });
+}
