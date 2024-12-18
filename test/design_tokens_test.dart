@@ -258,6 +258,152 @@ void main() {
     });
   });
 
+  group('TokenAlias', () {
+    test('creates with alias and targetKey', () {
+      const alias = TokenAlias(alias: 'brand', targetKey: 'primary');
+      expect(alias.alias, 'brand');
+      expect(alias.targetKey, 'primary');
+    });
+
+    test('equality based on both fields', () {
+      const a = TokenAlias(alias: 'brand', targetKey: 'primary');
+      const b = TokenAlias(alias: 'brand', targetKey: 'primary');
+      const c = TokenAlias(alias: 'brand', targetKey: 'secondary');
+      expect(a, equals(b));
+      expect(a, isNot(equals(c)));
+    });
+
+    test('hashCode consistent with equality', () {
+      const a = TokenAlias(alias: 'brand', targetKey: 'primary');
+      const b = TokenAlias(alias: 'brand', targetKey: 'primary');
+      expect(a.hashCode, equals(b.hashCode));
+    });
+  });
+
+  group('ResponsiveToken', () {
+    test('resolves breakpoint values', () {
+      final token = ResponsiveToken<double>({
+        'mobile': 8.0,
+        'tablet': 16.0,
+        'desktop': 24.0,
+      });
+      expect(token.resolve('mobile'), 8.0);
+      expect(token.resolve('tablet'), 16.0);
+      expect(token.resolve('desktop'), 24.0);
+    });
+
+    test('returns null for unknown breakpoint', () {
+      final token = ResponsiveToken<double>({'mobile': 8.0});
+      expect(token.resolve('desktop'), isNull);
+    });
+
+    test('lists breakpoint names', () {
+      final token = ResponsiveToken<String>({
+        'mobile': 'sm',
+        'tablet': 'md',
+        'desktop': 'lg',
+      });
+      expect(token.breakpointNames, ['mobile', 'tablet', 'desktop']);
+    });
+
+    test('checks breakpoint existence', () {
+      final token = ResponsiveToken<int>({'mobile': 1, 'desktop': 3});
+      expect(token.containsBreakpoint('mobile'), isTrue);
+      expect(token.containsBreakpoint('tablet'), isFalse);
+    });
+
+    test('round-trips through JSON', () {
+      final original = ResponsiveToken<double>({
+        'mobile': 8.0,
+        'tablet': 16.0,
+        'desktop': 24.0,
+      });
+
+      final json = original.toJson((v) => v);
+      final restored = ResponsiveToken.fromJson<double>(
+        json,
+        (v) => (v as num).toDouble(),
+      );
+
+      expect(restored.resolve('mobile'), 8.0);
+      expect(restored.resolve('tablet'), 16.0);
+      expect(restored.resolve('desktop'), 24.0);
+      expect(restored.breakpointNames, ['mobile', 'tablet', 'desktop']);
+    });
+  });
+
+  group('Theme aliases', () {
+    late Theme theme;
+
+    setUp(() {
+      theme = Theme(
+        name: 'light',
+        colors: {
+          'primary': ColorToken.fromHex('#3366FF'),
+          'background': ColorToken.fromHex('#FFFFFF'),
+        },
+        spacings: {
+          'sm': const SpacingToken(value: 8.0),
+          'md': const SpacingToken(value: 16.0),
+        },
+        typographies: {
+          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+        },
+      );
+    });
+
+    test('withAliases returns new theme with aliases', () {
+      final aliased = theme.withAliases({'brand': 'primary', 'base': 'sm'});
+      expect(aliased.aliases, {'brand': 'primary', 'base': 'sm'});
+      expect(aliased.name, 'light');
+    });
+
+    test('resolveColor by direct name', () {
+      final aliased = theme.withAliases({'brand': 'primary'});
+      expect(aliased.resolveColor('primary')!.toHex(), '#3366ff');
+    });
+
+    test('resolveColor by alias', () {
+      final aliased = theme.withAliases({'brand': 'primary'});
+      expect(aliased.resolveColor('brand')!.toHex(), '#3366ff');
+    });
+
+    test('resolveColor returns null for unknown', () {
+      final aliased = theme.withAliases({'brand': 'primary'});
+      expect(aliased.resolveColor('nonexistent'), isNull);
+    });
+
+    test('resolveSpacing by alias', () {
+      final aliased = theme.withAliases({'small': 'sm'});
+      expect(aliased.resolveSpacing('small')!.value, 8.0);
+    });
+
+    test('resolveSpacing by direct name', () {
+      final aliased = theme.withAliases({'small': 'sm'});
+      expect(aliased.resolveSpacing('md')!.value, 16.0);
+    });
+
+    test('resolveTypography by alias', () {
+      final aliased = theme.withAliases({'paragraph': 'body'});
+      expect(aliased.resolveTypography('paragraph')!.fontSize, 16.0);
+    });
+
+    test('resolveTypography by direct name', () {
+      final aliased = theme.withAliases({'paragraph': 'body'});
+      expect(aliased.resolveTypography('body')!.fontSize, 16.0);
+    });
+
+    test('alias not found falls through to regular lookup returning null', () {
+      final aliased = theme.withAliases({'brand': 'nonexistent'});
+      expect(aliased.resolveColor('brand'), isNull);
+    });
+
+    test('aliases getter returns unmodifiable map', () {
+      final aliased = theme.withAliases({'brand': 'primary'});
+      expect(() => (aliased.aliases as Map)['x'] = 'y', throwsUnsupportedError);
+    });
+  });
+
   group('ThemeManager', () {
     late ThemeManager manager;
     late Theme lightTheme;
@@ -354,6 +500,31 @@ void main() {
       expect(restored.typography('heading')!.fontSize, 32.0);
       expect(restored.shadow('elevated')!.radius, 16.0);
       expect(restored.border('thin')!.width, 1.0);
+    });
+
+    test('exports and imports JSON round-trip with aliases', () {
+      final theme = Theme(
+        name: 'aliased',
+        colors: {
+          'primary': ColorToken.fromHex('#FF0000'),
+        },
+        spacings: {
+          'sm': const SpacingToken(value: 4.0),
+        },
+        typographies: {
+          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+        },
+        aliases: {'brand': 'primary', 'small': 'sm', 'paragraph': 'body'},
+      );
+
+      final json = exporter.exportJson(theme);
+      expect(json['aliases'], {'brand': 'primary', 'small': 'sm', 'paragraph': 'body'});
+
+      final restored = exporter.importJson(json);
+      expect(restored.aliases, {'brand': 'primary', 'small': 'sm', 'paragraph': 'body'});
+      expect(restored.resolveColor('brand')!.toHex(), '#ff0000');
+      expect(restored.resolveSpacing('small')!.value, 4.0);
+      expect(restored.resolveTypography('paragraph')!.fontSize, 16.0);
     });
 
     test('serializes and deserializes bytes', () {

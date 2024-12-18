@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-02
+
+### Added
+- `TokenAlias` class for defining alternative token names
+- `ResponsiveToken<T>` for breakpoint-dependent token values
+- `Theme.withAliases()` to register semantic aliases
+- `Theme.resolveColor()`, `resolveSpacing()`, `resolveTypography()` — resolve by name or alias
+- `TokenExporter` now includes aliases in JSON output
+
 ## [0.1.0] - 2026-04-01
 
 ### Added

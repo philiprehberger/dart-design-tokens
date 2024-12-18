@@ -24,6 +24,11 @@ class Theme {
   /// Border tokens keyed by name.
   final Map<String, BorderToken> borders;
 
+  final Map<String, String> _aliases;
+
+  /// Returns the registered aliases as an unmodifiable map.
+  Map<String, String> get aliases => Map.unmodifiable(_aliases);
+
   /// Creates a [Theme] with the given token maps.
   const Theme({
     required this.name,
@@ -32,7 +37,8 @@ class Theme {
     this.typographies = const {},
     this.shadows = const {},
     this.borders = const {},
-  });
+    Map<String, String> aliases = const {},
+  }) : _aliases = aliases;
 
   /// Looks up a color token by [key]. Returns `null` if not found.
   ColorToken? color(String key) => colors[key];
@@ -49,6 +55,37 @@ class Theme {
   /// Looks up a border token by [key]. Returns `null` if not found.
   BorderToken? border(String key) => borders[key];
 
+  /// Returns a new [Theme] with the given [aliases] added.
+  ///
+  /// Each alias maps a semantic name to an existing token key.
+  Theme withAliases(Map<String, String> aliases) => Theme(
+        name: name,
+        colors: colors,
+        spacings: spacings,
+        typographies: typographies,
+        shadows: shadows,
+        borders: borders,
+        aliases: {..._aliases, ...aliases},
+      );
+
+  /// Looks up a color token by [nameOrAlias].
+  ///
+  /// Checks direct token names first, then falls back to aliases.
+  ColorToken? resolveColor(String nameOrAlias) =>
+      colors[nameOrAlias] ?? colors[_aliases[nameOrAlias]];
+
+  /// Looks up a spacing token by [nameOrAlias].
+  ///
+  /// Checks direct token names first, then falls back to aliases.
+  SpacingToken? resolveSpacing(String nameOrAlias) =>
+      spacings[nameOrAlias] ?? spacings[_aliases[nameOrAlias]];
+
+  /// Looks up a typography token by [nameOrAlias].
+  ///
+  /// Checks direct token names first, then falls back to aliases.
+  TypographyToken? resolveTypography(String nameOrAlias) =>
+      typographies[nameOrAlias] ?? typographies[_aliases[nameOrAlias]];
+
   /// Creates a new theme by merging [other] into this theme.
   ///
   /// Tokens from [other] override tokens in this theme when keys collide.
@@ -59,6 +96,7 @@ class Theme {
         typographies: {...typographies, ...other.typographies},
         shadows: {...shadows, ...other.shadows},
         borders: {...borders, ...other.borders},
+        aliases: {..._aliases, ...other._aliases},
       );
 
   /// Creates a new theme by extending this theme with additional tokens.
@@ -78,6 +116,7 @@ class Theme {
         typographies: {...this.typographies, ...?typographies},
         shadows: {...this.shadows, ...?shadows},
         borders: {...this.borders, ...?borders},
+        aliases: _aliases,
       );
 
   /// Converts this theme to a JSON-serializable map.
@@ -88,6 +127,7 @@ class Theme {
         'typographies': typographies.map((k, v) => MapEntry(k, v.toJson())),
         'shadows': shadows.map((k, v) => MapEntry(k, v.toJson())),
         'borders': borders.map((k, v) => MapEntry(k, v.toJson())),
+        'aliases': _aliases,
       };
 
   /// Creates a [Theme] from a JSON map.
@@ -111,6 +151,10 @@ class Theme {
             {},
         borders: (json['borders'] as Map<String, dynamic>?)?.map(
               (k, v) => MapEntry(k, BorderToken.fromJson(v as Map<String, dynamic>)),
+            ) ??
+            {},
+        aliases: (json['aliases'] as Map<String, dynamic>?)?.map(
+              (k, v) => MapEntry(k, v as String),
             ) ??
             {},
       );
