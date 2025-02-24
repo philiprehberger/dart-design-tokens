@@ -16,7 +16,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  philiprehberger_design_tokens: ^0.2.0
+  philiprehberger_design_tokens: ^0.3.0
 ```
 
 Then run:
@@ -158,6 +158,18 @@ final bytes = exporter.serialize(theme);
 final fromBytes = exporter.deserialize(bytes);
 ```
 
+### Input Validation
+
+All token constructors validate their inputs at construction time:
+
+- `ColorToken` -- RGBA channels must be between 0.0 and 1.0
+- `SpacingToken` -- value must be non-negative
+- `TypographyToken` -- fontSize must be positive, lineHeight (if set) must be positive
+- `BorderToken` -- width must be non-negative
+- `ShadowToken` -- radius must be non-negative, opacity must be between 0.0 and 1.0
+
+Invalid values throw `RangeError`.
+
 ### Validation
 
 ```dart
@@ -167,6 +179,8 @@ final issues = validator.validate(
   requiredColors: ['primary', 'background', 'error'],
   requiredSpacing: ['sm', 'md', 'lg'],
   requiredTypography: ['body', 'heading'],
+  requiredShadows: ['card'],
+  requiredBorders: ['default'],
 );
 
 for (final issue in issues) {
@@ -238,7 +252,7 @@ for (final issue in issues) {
 
 | Method | Description |
 |--------|-------------|
-| `validate(theme, ...)` | Validate against required token names |
+| `validate(theme, ...)` | Validate against required token names (colors, spacing, typography, shadows, borders) |
 
 ## Development
 

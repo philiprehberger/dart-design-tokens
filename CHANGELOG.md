@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-02
+
+### Added
+- Input validation on all token constructors (ColorToken, SpacingToken, TypographyToken, BorderToken, ShadowToken)
+- `TokenValidator.validate()` now supports `requiredShadows` and `requiredBorders` parameters
+- Empty shadow and border token maps now generate validation warnings
+- Theme token maps are now unmodifiable after construction
+
 ## [0.2.0] - 2026-04-02
 
 ### Added

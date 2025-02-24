@@ -43,12 +43,19 @@ class TypographyToken {
   final double? letterSpacing;
 
   /// Creates a [TypographyToken].
-  const TypographyToken({
+  TypographyToken({
     required this.fontSize,
     required this.fontWeight,
     this.lineHeight,
     this.letterSpacing,
-  });
+  }) {
+    if (fontSize <= 0.0) {
+      throw RangeError.value(fontSize, 'fontSize', 'Font size must be positive');
+    }
+    if (lineHeight != null && lineHeight! <= 0.0) {
+      throw RangeError.value(lineHeight!, 'lineHeight', 'Line height must be positive');
+    }
+  }
 
   /// Converts this token to a JSON-serializable map.
   Map<String, dynamic> toJson() => {

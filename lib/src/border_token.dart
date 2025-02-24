@@ -24,11 +24,15 @@ class BorderToken {
   final BorderStyle style;
 
   /// Creates a [BorderToken].
-  const BorderToken({
+  BorderToken({
     required this.width,
     required this.color,
     this.style = BorderStyle.solid,
-  });
+  }) {
+    if (width < 0.0) {
+      throw RangeError.value(width, 'width', 'Border width must be non-negative');
+    }
+  }
 
   /// Converts this token to a JSON-serializable map.
   Map<String, dynamic> toJson() => {

@@ -4,7 +4,7 @@ import 'package:philiprehberger_design_tokens/design_tokens.dart';
 void main() {
   group('ColorToken', () {
     test('creates from RGBA values', () {
-      const color = ColorToken(red: 1.0, green: 0.5, blue: 0.0);
+      final color = ColorToken(red: 1.0, green: 0.5, blue: 0.0);
       expect(color.red, 1.0);
       expect(color.green, 0.5);
       expect(color.blue, 0.0);
@@ -46,17 +46,17 @@ void main() {
     });
 
     test('converts to hex string', () {
-      const color = ColorToken(red: 1.0, green: 0.0, blue: 0.0);
+      final color = ColorToken(red: 1.0, green: 0.0, blue: 0.0);
       expect(color.toHex(), '#ff0000');
     });
 
     test('converts to hex with alpha', () {
-      const color = ColorToken(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.5);
+      final color = ColorToken(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.5);
       expect(color.toHex(includeAlpha: true), '#ff000080');
     });
 
     test('round-trips through JSON', () {
-      const original = ColorToken(red: 0.2, green: 0.4, blue: 0.6, alpha: 0.8);
+      final original = ColorToken(red: 0.2, green: 0.4, blue: 0.6, alpha: 0.8);
       final restored = ColorToken.fromJson(original.toJson());
       expect(restored, equals(original));
     });
@@ -64,12 +64,12 @@ void main() {
 
   group('SpacingToken', () {
     test('creates with value', () {
-      const token = SpacingToken(value: 16.0);
+      final token = SpacingToken(value: 16.0);
       expect(token.value, 16.0);
     });
 
     test('round-trips through JSON', () {
-      const original = SpacingToken(value: 24.0);
+      final original = SpacingToken(value: 24.0);
       final restored = SpacingToken.fromJson(original.toJson());
       expect(restored, equals(original));
     });
@@ -77,7 +77,7 @@ void main() {
 
   group('TypographyToken', () {
     test('creates with required fields', () {
-      const token = TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular);
+      final token = TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular);
       expect(token.fontSize, 16.0);
       expect(token.fontWeight, FontWeight.regular);
       expect(token.lineHeight, isNull);
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('creates with optional fields', () {
-      const token = TypographyToken(
+      final token = TypographyToken(
         fontSize: 24.0,
         fontWeight: FontWeight.bold,
         lineHeight: 1.5,
@@ -96,7 +96,7 @@ void main() {
     });
 
     test('round-trips through JSON', () {
-      const original = TypographyToken(
+      final original = TypographyToken(
         fontSize: 14.0,
         fontWeight: FontWeight.semibold,
         lineHeight: 1.4,
@@ -108,8 +108,8 @@ void main() {
 
   group('ShadowToken', () {
     test('creates with all fields', () {
-      const color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
-      const token = ShadowToken(
+      final color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
+      final token = ShadowToken(
         color: color,
         radius: 8.0,
         xOffset: 2.0,
@@ -123,14 +123,14 @@ void main() {
     });
 
     test('defaults opacity to 1.0', () {
-      const color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
-      const token = ShadowToken(color: color, radius: 4.0, xOffset: 0.0, yOffset: 2.0);
+      final color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
+      final token = ShadowToken(color: color, radius: 4.0, xOffset: 0.0, yOffset: 2.0);
       expect(token.opacity, 1.0);
     });
 
     test('round-trips through JSON', () {
-      const color = ColorToken(red: 0.1, green: 0.2, blue: 0.3);
-      const original = ShadowToken(
+      final color = ColorToken(red: 0.1, green: 0.2, blue: 0.3);
+      final original = ShadowToken(
         color: color,
         radius: 10.0,
         xOffset: 1.0,
@@ -144,21 +144,21 @@ void main() {
 
   group('BorderToken', () {
     test('creates with all fields', () {
-      const color = ColorToken(red: 0.5, green: 0.5, blue: 0.5);
-      const token = BorderToken(width: 2.0, color: color, style: BorderStyle.dashed);
+      final color = ColorToken(red: 0.5, green: 0.5, blue: 0.5);
+      final token = BorderToken(width: 2.0, color: color, style: BorderStyle.dashed);
       expect(token.width, 2.0);
       expect(token.style, BorderStyle.dashed);
     });
 
     test('defaults style to solid', () {
-      const color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
-      const token = BorderToken(width: 1.0, color: color);
+      final color = ColorToken(red: 0.0, green: 0.0, blue: 0.0);
+      final token = BorderToken(width: 1.0, color: color);
       expect(token.style, BorderStyle.solid);
     });
 
     test('round-trips through JSON', () {
-      const color = ColorToken(red: 1.0, green: 0.0, blue: 0.0);
-      const original = BorderToken(width: 3.0, color: color, style: BorderStyle.dotted);
+      final color = ColorToken(red: 1.0, green: 0.0, blue: 0.0);
+      final original = BorderToken(width: 3.0, color: color, style: BorderStyle.dotted);
       final restored = BorderToken.fromJson(original.toJson());
       expect(restored, equals(original));
     });
@@ -175,11 +175,11 @@ void main() {
           'background': ColorToken.fromHex('#FFFFFF'),
         },
         spacings: {
-          'sm': const SpacingToken(value: 8.0),
-          'md': const SpacingToken(value: 16.0),
+          'sm': SpacingToken(value: 8.0),
+          'md': SpacingToken(value: 16.0),
         },
         typographies: {
-          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+          'body': TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
         },
         shadows: {
           'card': ShadowToken(
@@ -236,7 +236,7 @@ void main() {
           'background': ColorToken.fromHex('#1A1A1A'),
         },
         spacings: {
-          'lg': const SpacingToken(value: 32.0),
+          'lg': SpacingToken(value: 32.0),
         },
       );
 
@@ -343,11 +343,11 @@ void main() {
           'background': ColorToken.fromHex('#FFFFFF'),
         },
         spacings: {
-          'sm': const SpacingToken(value: 8.0),
-          'md': const SpacingToken(value: 16.0),
+          'sm': SpacingToken(value: 8.0),
+          'md': SpacingToken(value: 16.0),
         },
         typographies: {
-          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+          'body': TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
         },
       );
     });
@@ -411,8 +411,8 @@ void main() {
 
     setUp(() {
       manager = ThemeManager();
-      lightTheme = const Theme(name: 'light');
-      darkTheme = const Theme(name: 'dark');
+      lightTheme = Theme(name: 'light');
+      darkTheme = Theme(name: 'dark');
     });
 
     test('registers themes', () {
@@ -463,10 +463,10 @@ void main() {
           'secondary': ColorToken.fromHex('#00FF00'),
         },
         spacings: {
-          'sm': const SpacingToken(value: 4.0),
+          'sm': SpacingToken(value: 4.0),
         },
         typographies: {
-          'heading': const TypographyToken(
+          'heading': TypographyToken(
             fontSize: 32.0,
             fontWeight: FontWeight.bold,
             lineHeight: 1.2,
@@ -509,10 +509,10 @@ void main() {
           'primary': ColorToken.fromHex('#FF0000'),
         },
         spacings: {
-          'sm': const SpacingToken(value: 4.0),
+          'sm': SpacingToken(value: 4.0),
         },
         typographies: {
-          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+          'body': TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
         },
         aliases: {'brand': 'primary', 'small': 'sm', 'paragraph': 'body'},
       );
@@ -556,10 +556,10 @@ void main() {
           'background': ColorToken.fromHex('#FFFFFF'),
         },
         spacings: {
-          'sm': const SpacingToken(value: 8.0),
+          'sm': SpacingToken(value: 8.0),
         },
         typographies: {
-          'body': const TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
+          'body': TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
         },
       );
 
@@ -574,7 +574,7 @@ void main() {
     });
 
     test('reports missing required color tokens', () {
-      const theme = Theme(name: 'incomplete', colors: {});
+      final theme = Theme(name: 'incomplete', colors: {});
 
       final issues = validator.validate(
         theme,
@@ -588,7 +588,7 @@ void main() {
     });
 
     test('reports missing required spacing tokens', () {
-      const theme = Theme(name: 'incomplete');
+      final theme = Theme(name: 'incomplete');
 
       final issues = validator.validate(
         theme,
@@ -600,7 +600,7 @@ void main() {
     });
 
     test('reports missing required typography tokens', () {
-      const theme = Theme(name: 'incomplete');
+      final theme = Theme(name: 'incomplete');
 
       final issues = validator.validate(
         theme,
@@ -612,15 +612,186 @@ void main() {
     });
 
     test('warns on empty token maps', () {
-      const theme = Theme(name: 'empty');
+      final theme = Theme(name: 'empty');
 
       final issues = validator.validate(theme);
 
       final warnings = issues.where((i) => i.severity == Severity.warning).toList();
-      expect(warnings, hasLength(3));
+      expect(warnings, hasLength(5));
       expect(warnings.any((i) => i.message.contains('color')), isTrue);
       expect(warnings.any((i) => i.message.contains('spacing')), isTrue);
       expect(warnings.any((i) => i.message.contains('typography')), isTrue);
+      expect(warnings.any((i) => i.message.contains('shadow')), isTrue);
+      expect(warnings.any((i) => i.message.contains('border')), isTrue);
+    });
+  });
+
+  group('Input validation', () {
+    test('ColorToken rejects red out of range', () {
+      expect(() => ColorToken(red: 1.5, green: 0.0, blue: 0.0), throwsA(isA<RangeError>()));
+      expect(() => ColorToken(red: -0.1, green: 0.0, blue: 0.0), throwsA(isA<RangeError>()));
+    });
+
+    test('ColorToken rejects green out of range', () {
+      expect(() => ColorToken(red: 0.0, green: 1.1, blue: 0.0), throwsA(isA<RangeError>()));
+    });
+
+    test('ColorToken rejects blue out of range', () {
+      expect(() => ColorToken(red: 0.0, green: 0.0, blue: -0.5), throwsA(isA<RangeError>()));
+    });
+
+    test('ColorToken rejects alpha out of range', () {
+      expect(() => ColorToken(red: 0.0, green: 0.0, blue: 0.0, alpha: 2.0), throwsA(isA<RangeError>()));
+    });
+
+    test('SpacingToken rejects negative value', () {
+      expect(() => SpacingToken(value: -1.0), throwsA(isA<RangeError>()));
+    });
+
+    test('SpacingToken accepts zero', () {
+      expect(SpacingToken(value: 0.0).value, 0.0);
+    });
+
+    test('TypographyToken rejects non-positive fontSize', () {
+      expect(
+        () => TypographyToken(fontSize: 0.0, fontWeight: FontWeight.regular),
+        throwsA(isA<RangeError>()),
+      );
+      expect(
+        () => TypographyToken(fontSize: -5.0, fontWeight: FontWeight.regular),
+        throwsA(isA<RangeError>()),
+      );
+    });
+
+    test('TypographyToken rejects non-positive lineHeight', () {
+      expect(
+        () => TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular, lineHeight: 0.0),
+        throwsA(isA<RangeError>()),
+      );
+    });
+
+    test('BorderToken rejects negative width', () {
+      expect(
+        () => BorderToken(width: -1.0, color: ColorToken(red: 0.0, green: 0.0, blue: 0.0)),
+        throwsA(isA<RangeError>()),
+      );
+    });
+
+    test('BorderToken accepts zero width', () {
+      final token = BorderToken(width: 0.0, color: ColorToken(red: 0.0, green: 0.0, blue: 0.0));
+      expect(token.width, 0.0);
+    });
+
+    test('ShadowToken rejects negative radius', () {
+      expect(
+        () => ShadowToken(
+          color: ColorToken(red: 0.0, green: 0.0, blue: 0.0),
+          radius: -1.0,
+          xOffset: 0.0,
+          yOffset: 0.0,
+        ),
+        throwsA(isA<RangeError>()),
+      );
+    });
+
+    test('ShadowToken rejects opacity out of range', () {
+      expect(
+        () => ShadowToken(
+          color: ColorToken(red: 0.0, green: 0.0, blue: 0.0),
+          radius: 4.0,
+          xOffset: 0.0,
+          yOffset: 0.0,
+          opacity: 1.5,
+        ),
+        throwsA(isA<RangeError>()),
+      );
+    });
+  });
+
+  group('TokenValidator shadows and borders', () {
+    late TokenValidator validator;
+
+    setUp(() {
+      validator = TokenValidator();
+    });
+
+    test('reports missing required shadow tokens', () {
+      final theme = Theme(name: 'test');
+      final issues = validator.validate(
+        theme,
+        requiredShadows: ['card', 'dropdown'],
+      );
+      final errors = issues.where((i) => i.severity == Severity.error).toList();
+      expect(errors, hasLength(2));
+      expect(errors[0].message, contains('card'));
+      expect(errors[1].message, contains('dropdown'));
+    });
+
+    test('reports missing required border tokens', () {
+      final theme = Theme(name: 'test');
+      final issues = validator.validate(
+        theme,
+        requiredBorders: ['default', 'focus'],
+      );
+      final errors = issues.where((i) => i.severity == Severity.error).toList();
+      expect(errors, hasLength(2));
+      expect(errors[0].message, contains('default'));
+      expect(errors[1].message, contains('focus'));
+    });
+
+    test('passes when required shadows and borders exist', () {
+      final theme = Theme(
+        name: 'complete',
+        shadows: {
+          'card': ShadowToken(
+            color: ColorToken(red: 0.0, green: 0.0, blue: 0.0),
+            radius: 4.0,
+            xOffset: 0.0,
+            yOffset: 2.0,
+          ),
+        },
+        borders: {
+          'default': BorderToken(
+            width: 1.0,
+            color: ColorToken(red: 0.5, green: 0.5, blue: 0.5),
+          ),
+        },
+      );
+      final issues = validator.validate(
+        theme,
+        requiredShadows: ['card'],
+        requiredBorders: ['default'],
+      );
+      final errors = issues.where((i) => i.severity == Severity.error).toList();
+      expect(errors, isEmpty);
+    });
+
+    test('warns on empty shadow and border maps', () {
+      final theme = Theme(name: 'empty');
+      final issues = validator.validate(theme);
+      final warnings = issues.where((i) => i.severity == Severity.warning).toList();
+      expect(warnings.any((i) => i.message.contains('shadow')), isTrue);
+      expect(warnings.any((i) => i.message.contains('border')), isTrue);
+    });
+  });
+
+  group('Theme immutability', () {
+    test('external map mutation does not affect theme', () {
+      final colors = {'primary': ColorToken.fromHex('#FF0000')};
+      final theme = Theme(name: 'test', colors: colors);
+      colors['secondary'] = ColorToken.fromHex('#00FF00');
+      expect(theme.colors.containsKey('secondary'), isFalse);
+    });
+
+    test('theme color map is unmodifiable', () {
+      final theme = Theme(
+        name: 'test',
+        colors: {'primary': ColorToken.fromHex('#FF0000')},
+      );
+      expect(
+        () => (theme.colors as Map)['x'] = ColorToken.fromHex('#000000'),
+        throwsUnsupportedError,
+      );
     });
   });
 }
