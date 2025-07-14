@@ -561,6 +561,20 @@ void main() {
         typographies: {
           'body': TypographyToken(fontSize: 16.0, fontWeight: FontWeight.regular),
         },
+        shadows: {
+          'card': ShadowToken(
+            color: ColorToken.fromHex('#000000'),
+            radius: 4.0,
+            xOffset: 0.0,
+            yOffset: 2.0,
+          ),
+        },
+        borders: {
+          'default': BorderToken(
+            width: 1.0,
+            color: ColorToken.fromHex('#CCCCCC'),
+          ),
+        },
       );
 
       final issues = validator.validate(
