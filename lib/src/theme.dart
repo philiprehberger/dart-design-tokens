@@ -30,15 +30,20 @@ class Theme {
   Map<String, String> get aliases => Map.unmodifiable(_aliases);
 
   /// Creates a [Theme] with the given token maps.
-  const Theme({
+  Theme({
     required this.name,
-    this.colors = const {},
-    this.spacings = const {},
-    this.typographies = const {},
-    this.shadows = const {},
-    this.borders = const {},
+    Map<String, ColorToken> colors = const {},
+    Map<String, SpacingToken> spacings = const {},
+    Map<String, TypographyToken> typographies = const {},
+    Map<String, ShadowToken> shadows = const {},
+    Map<String, BorderToken> borders = const {},
     Map<String, String> aliases = const {},
-  }) : _aliases = aliases;
+  })  : colors = Map.unmodifiable(colors),
+        spacings = Map.unmodifiable(spacings),
+        typographies = Map.unmodifiable(typographies),
+        shadows = Map.unmodifiable(shadows),
+        borders = Map.unmodifiable(borders),
+        _aliases = Map.of(aliases);
 
   /// Looks up a color token by [key]. Returns `null` if not found.
   ColorToken? color(String key) => colors[key];

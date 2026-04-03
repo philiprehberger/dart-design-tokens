@@ -18,13 +18,20 @@ class ShadowToken {
   final double opacity;
 
   /// Creates a [ShadowToken].
-  const ShadowToken({
+  ShadowToken({
     required this.color,
     required this.radius,
     required this.xOffset,
     required this.yOffset,
     this.opacity = 1.0,
-  });
+  }) {
+    if (radius < 0.0) {
+      throw RangeError.value(radius, 'radius', 'Shadow radius must be non-negative');
+    }
+    if (opacity < 0.0 || opacity > 1.0) {
+      throw RangeError.range(opacity, 0, 1, 'opacity');
+    }
+  }
 
   /// Converts this token to a JSON-serializable map.
   Map<String, dynamic> toJson() => {

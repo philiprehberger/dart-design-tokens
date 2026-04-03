@@ -48,6 +48,8 @@ class TokenValidator {
     List<String> requiredColors = const [],
     List<String> requiredSpacing = const [],
     List<String> requiredTypography = const [],
+    List<String> requiredShadows = const [],
+    List<String> requiredBorders = const [],
   }) {
     final issues = <ValidationIssue>[];
 
@@ -78,6 +80,24 @@ class TokenValidator {
       }
     }
 
+    for (final name in requiredShadows) {
+      if (!theme.shadows.containsKey(name)) {
+        issues.add(ValidationIssue(
+          severity: Severity.error,
+          message: 'Missing required shadow token: $name',
+        ));
+      }
+    }
+
+    for (final name in requiredBorders) {
+      if (!theme.borders.containsKey(name)) {
+        issues.add(ValidationIssue(
+          severity: Severity.error,
+          message: 'Missing required border token: $name',
+        ));
+      }
+    }
+
     if (theme.colors.isEmpty) {
       issues.add(const ValidationIssue(
         severity: Severity.warning,
@@ -96,6 +116,20 @@ class TokenValidator {
       issues.add(const ValidationIssue(
         severity: Severity.warning,
         message: 'Theme has no typography tokens',
+      ));
+    }
+
+    if (theme.shadows.isEmpty) {
+      issues.add(const ValidationIssue(
+        severity: Severity.warning,
+        message: 'Theme has no shadow tokens',
+      ));
+    }
+
+    if (theme.borders.isEmpty) {
+      issues.add(const ValidationIssue(
+        severity: Severity.warning,
+        message: 'Theme has no border tokens',
       ));
     }
 

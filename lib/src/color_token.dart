@@ -13,12 +13,25 @@ class ColorToken {
   final double alpha;
 
   /// Creates a [ColorToken] with RGBA values between 0.0 and 1.0.
-  const ColorToken({
+  ColorToken({
     required this.red,
     required this.green,
     required this.blue,
     this.alpha = 1.0,
-  });
+  }) {
+    if (red < 0.0 || red > 1.0) {
+      throw RangeError.range(red, 0, 1, 'red');
+    }
+    if (green < 0.0 || green > 1.0) {
+      throw RangeError.range(green, 0, 1, 'green');
+    }
+    if (blue < 0.0 || blue > 1.0) {
+      throw RangeError.range(blue, 0, 1, 'blue');
+    }
+    if (alpha < 0.0 || alpha > 1.0) {
+      throw RangeError.range(alpha, 0, 1, 'alpha');
+    }
+  }
 
   /// Creates a [ColorToken] from a hex string.
   ///

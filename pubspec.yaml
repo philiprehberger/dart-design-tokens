@@ -1,7 +1,7 @@
 name: philiprehberger_design_tokens
 description: >-
   Token-based design system with themes, JSON import/export, and validation
-version: 0.2.0
+version: 0.3.0
 homepage: https://philiprehberger.com/open-source-packages/dart/philiprehberger_design_tokens
 repository: https://github.com/philiprehberger/dart-design-tokens
 issue_tracker: https://github.com/philiprehberger/dart-design-tokens/issues

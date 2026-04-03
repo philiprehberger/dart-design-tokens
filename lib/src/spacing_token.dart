@@ -4,7 +4,11 @@ class SpacingToken {
   final double value;
 
   /// Creates a [SpacingToken] with the given [value].
-  const SpacingToken({required this.value});
+  SpacingToken({required this.value}) {
+    if (value < 0.0) {
+      throw RangeError.value(value, 'value', 'Spacing value must be non-negative');
+    }
+  }
 
   /// Converts this token to a JSON-serializable map.
   Map<String, dynamic> toJson() => {'value': value};
