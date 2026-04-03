@@ -16,7 +16,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  philiprehberger_design_tokens: ^0.1.0
+  philiprehberger_design_tokens: ^0.2.0
 ```
 
 Then run:
@@ -107,6 +107,41 @@ final extended = baseTheme.extending(
 );
 ```
 
+### Token Aliases
+
+```dart
+// Register semantic aliases for existing token keys
+final themed = theme.withAliases({
+  'brand': 'primary',
+  'small': 'sm',
+  'paragraph': 'body',
+});
+
+// Resolve by alias or direct name
+final color = themed.resolveColor('brand');    // same as theme.color('primary')
+final spacing = themed.resolveSpacing('small'); // same as theme.spacing('sm')
+final typo = themed.resolveTypography('paragraph');
+```
+
+### Responsive Tokens
+
+```dart
+// Define breakpoint-dependent values
+final spacing = ResponsiveToken<double>({
+  'mobile': 8.0,
+  'tablet': 16.0,
+  'desktop': 24.0,
+});
+
+print(spacing.resolve('tablet'));          // 16.0
+print(spacing.containsBreakpoint('mobile')); // true
+print(spacing.breakpointNames);            // [mobile, tablet, desktop]
+
+// JSON round-trip
+final json = spacing.toJson((v) => v);
+final restored = ResponsiveToken.fromJson<double>(json, (v) => (v as num).toDouble());
+```
+
 ### JSON Export and Import
 
 ```dart
@@ -150,6 +185,8 @@ for (final issue in issues) {
 | `TypographyToken` | Font size, weight, line height, letter spacing |
 | `ShadowToken` | Shadow with color, radius, offsets, opacity |
 | `BorderToken` | Border with width, color, and style |
+| `TokenAlias` | Maps an alias name to an existing token key |
+| `ResponsiveToken<T>` | Breakpoint-dependent token values |
 
 ### Theme
 
@@ -162,6 +199,21 @@ for (final issue in issues) {
 | `border(key)` | Look up a border token |
 | `merging(other)` | Merge another theme (other overrides) |
 | `extending(...)` | Extend with additional tokens |
+| `withAliases(aliases)` | Return new theme with semantic aliases |
+| `resolveColor(nameOrAlias)` | Look up color by name or alias |
+| `resolveSpacing(nameOrAlias)` | Look up spacing by name or alias |
+| `resolveTypography(nameOrAlias)` | Look up typography by name or alias |
+| `aliases` | Registered aliases (unmodifiable map) |
+
+### ResponsiveToken
+
+| Method | Description |
+|--------|-------------|
+| `resolve(breakpoint)` | Get value for a breakpoint |
+| `breakpointNames` | List of all breakpoint keys |
+| `containsBreakpoint(breakpoint)` | Check if breakpoint exists |
+| `toJson(serializer)` | Serialize to JSON map |
+| `fromJson(json, deserializer)` | Deserialize from JSON map |
 
 ### ThemeManager
 

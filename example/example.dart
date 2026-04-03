@@ -81,6 +81,27 @@ void main() {
   manager.switchTo('dark');
   print('Primary color: ${manager.activeTheme!.color("primary")!.toHex()}');
 
+  // Token aliases
+  final aliasedTheme = lightTheme.withAliases({
+    'brand': 'primary',
+    'small': 'sm',
+    'paragraph': 'body',
+  });
+
+  print('Brand color: ${aliasedTheme.resolveColor("brand")!.toHex()}');
+  print('Small spacing: ${aliasedTheme.resolveSpacing("small")!.value}');
+  print('Paragraph font: ${aliasedTheme.resolveTypography("paragraph")!.fontSize}');
+
+  // Responsive tokens
+  final responsiveSpacing = ResponsiveToken<double>({
+    'mobile': 8.0,
+    'tablet': 16.0,
+    'desktop': 24.0,
+  });
+
+  print('Tablet spacing: ${responsiveSpacing.resolve("tablet")}');
+  print('Breakpoints: ${responsiveSpacing.breakpointNames}');
+
   // Export and import
   final exporter = TokenExporter();
   final json = exporter.exportJson(lightTheme);
