@@ -9,17 +9,17 @@ void main() {
   final surface = ColorToken.fromHex('#F5F5F5');
 
   // Define spacing tokens
-  const spacingSm = SpacingToken(value: 8.0);
-  const spacingMd = SpacingToken(value: 16.0);
-  const spacingLg = SpacingToken(value: 32.0);
+  final spacingSm = SpacingToken(value: 8.0);
+  final spacingMd = SpacingToken(value: 16.0);
+  final spacingLg = SpacingToken(value: 32.0);
 
   // Define typography tokens
-  const heading = TypographyToken(
+  final heading = TypographyToken(
     fontSize: 32.0,
     fontWeight: FontWeight.bold,
     lineHeight: 1.2,
   );
-  const body = TypographyToken(
+  final body = TypographyToken(
     fontSize: 16.0,
     fontWeight: FontWeight.regular,
     lineHeight: 1.5,
