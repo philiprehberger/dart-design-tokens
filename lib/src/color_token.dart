@@ -1,3 +1,5 @@
+import 'dart:math';
+
 /// A color token representing an RGBA color value.
 class ColorToken {
   /// Red channel (0.0 to 1.0).
@@ -89,6 +91,64 @@ class ColorToken {
         blue: (json['blue'] as num).toDouble(),
         alpha: (json['alpha'] as num?)?.toDouble() ?? 1.0,
       );
+
+  /// The WCAG 2.1 relative luminance of this color.
+  ///
+  /// Returns a value in the range [0.0, 1.0] computed from the sRGB
+  /// color components per the WCAG 2.1 definition:
+  /// `L = 0.2126*R' + 0.7152*G' + 0.0722*B'`, where each linearized
+  /// channel `R'`, `G'`, `B'` is derived from the sRGB channel value.
+  ///
+  /// Black returns `0.0`; white returns `1.0`.
+  ///
+  /// See: https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
+  double get relativeLuminance {
+    double channel(double c) {
+      return c <= 0.03928 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4).toDouble();
+    }
+
+    return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
+  }
+
+  /// The WCAG 2.1 contrast ratio between this color and [other].
+  ///
+  /// Computed as `(L1 + 0.05) / (L2 + 0.05)`, where `L1` is the lighter
+  /// of the two relative luminances and `L2` is the darker. The result
+  /// is in the range [1.0, 21.0]; identical colors return `1.0`, and
+  /// pure black versus pure white returns approximately `21.0`.
+  ///
+  /// See: https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
+  double contrastRatio(ColorToken other) {
+    final l1 = relativeLuminance;
+    final l2 = other.relativeLuminance;
+    final lighter = l1 >= l2 ? l1 : l2;
+    final darker = l1 >= l2 ? l2 : l1;
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  /// Whether the contrast ratio between this color and [other] meets WCAG 2.1
+  /// AA requirements.
+  ///
+  /// Returns `true` when the contrast ratio is at least `4.5` for normal text
+  /// or at least `3.0` when [largeText] is `true`.
+  ///
+  /// See: https://www.w3.org/TR/WCAG21/#contrast-minimum
+  bool meetsWcagAA(ColorToken other, {bool largeText = false}) {
+    final threshold = largeText ? 3.0 : 4.5;
+    return contrastRatio(other) >= threshold;
+  }
+
+  /// Whether the contrast ratio between this color and [other] meets WCAG 2.1
+  /// AAA requirements.
+  ///
+  /// Returns `true` when the contrast ratio is at least `7.0` for normal text
+  /// or at least `4.5` when [largeText] is `true`.
+  ///
+  /// See: https://www.w3.org/TR/WCAG21/#contrast-enhanced
+  bool meetsWcagAAA(ColorToken other, {bool largeText = false}) {
+    final threshold = largeText ? 4.5 : 7.0;
+    return contrastRatio(other) >= threshold;
+  }
 
   @override
   String toString() => 'ColorToken(${toHex()}, alpha: $alpha)';

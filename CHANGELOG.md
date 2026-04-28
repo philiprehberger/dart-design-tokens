@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-04-28
+
+### Added
+- `ColorToken.relativeLuminance` getter computing WCAG 2.1 relative luminance
+- `ColorToken.contrastRatio()` for WCAG 2.1 contrast ratio between two colors
+- `ColorToken.meetsWcagAA()` for WCAG 2.1 AA contrast compliance (normal and large text)
+- `ColorToken.meetsWcagAAA()` for WCAG 2.1 AAA contrast compliance (normal and large text)
+
+### Changed
+- README Requirements now correctly states `Dart >= 3.6`
+
 ## [0.3.0] - 2026-04-02
 
 ### Added

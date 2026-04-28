@@ -8,7 +8,7 @@ Token-based design system with themes, JSON import/export, and validation. Zero 
 
 ## Requirements
 
-- Dart >= 3.5
+- Dart >= 3.6
 
 ## Installation
 
@@ -16,7 +16,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  philiprehberger_design_tokens: ^0.3.0
+  philiprehberger_design_tokens: ^0.4.0
 ```
 
 Then run:
@@ -170,6 +170,30 @@ All token constructors validate their inputs at construction time:
 
 Invalid values throw `RangeError`.
 
+### Accessibility Validation
+
+`ColorToken` includes WCAG 2.1 contrast helpers for verifying color pairs:
+
+```dart
+final foreground = ColorToken.fromHex('#000000');
+final background = ColorToken.fromHex('#FFFFFF');
+
+// Relative luminance per WCAG 2.1
+print(foreground.relativeLuminance); // 0.0
+print(background.relativeLuminance); // 1.0
+
+// Contrast ratio (1.0 .. 21.0)
+print(foreground.contrastRatio(background)); // ~21.0
+
+// AA: 4.5:1 normal text, 3:1 large text
+foreground.meetsWcagAA(background);                   // true
+foreground.meetsWcagAA(background, largeText: true);  // true
+
+// AAA: 7:1 normal text, 4.5:1 large text
+foreground.meetsWcagAAA(background);                  // true
+foreground.meetsWcagAAA(background, largeText: true); // true
+```
+
 ### Validation
 
 ```dart
@@ -201,6 +225,15 @@ for (final issue in issues) {
 | `BorderToken` | Border with width, color, and style |
 | `TokenAlias` | Maps an alias name to an existing token key |
 | `ResponsiveToken<T>` | Breakpoint-dependent token values |
+
+### ColorToken
+
+| Member | Description |
+|--------|-------------|
+| `relativeLuminance` | WCAG 2.1 relative luminance in `[0.0, 1.0]` |
+| `contrastRatio(other)` | WCAG 2.1 contrast ratio against another color (`1.0`..`21.0`) |
+| `meetsWcagAA(other, {largeText})` | `true` if contrast meets WCAG AA (4.5 normal, 3.0 large) |
+| `meetsWcagAAA(other, {largeText})` | `true` if contrast meets WCAG AAA (7.0 normal, 4.5 large) |
 
 ### Theme
 
@@ -266,13 +299,19 @@ dart test
 
 If you find this project useful:
 
-- [Star the repo](https://github.com/philiprehberger/dart-design-tokens)
-- [Report issues](https://github.com/philiprehberger/dart-design-tokens/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
-- [Suggest features](https://github.com/philiprehberger/dart-design-tokens/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
-- [Sponsor development](https://github.com/sponsors/philiprehberger)
-- [All Open Source Projects](https://philiprehberger.com/open-source-packages)
-- [GitHub Profile](https://github.com/philiprehberger)
-- [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
+⭐ [Star the repo](https://github.com/philiprehberger/dart-design-tokens)
+
+🐛 [Report issues](https://github.com/philiprehberger/dart-design-tokens/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+
+💡 [Suggest features](https://github.com/philiprehberger/dart-design-tokens/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement)
+
+❤️ [Sponsor development](https://github.com/sponsors/philiprehberger)
+
+🌐 [All Open Source Projects](https://philiprehberger.com/open-source-packages)
+
+💻 [GitHub Profile](https://github.com/philiprehberger)
+
+🔗 [LinkedIn Profile](https://www.linkedin.com/in/philiprehberger)
 
 ## License
 

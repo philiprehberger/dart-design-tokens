@@ -62,6 +62,58 @@ void main() {
     });
   });
 
+  group('ColorToken WCAG contrast', () {
+    final black = ColorToken.fromHex('#000000');
+    final white = ColorToken.fromHex('#FFFFFF');
+
+    test('relativeLuminance of black is 0.0', () {
+      expect(black.relativeLuminance, 0.0);
+    });
+
+    test('relativeLuminance of white is 1.0', () {
+      expect(white.relativeLuminance, closeTo(1.0, 1e-9));
+    });
+
+    test('contrastRatio black vs white is approximately 21.0', () {
+      expect(black.contrastRatio(white), closeTo(21.0, 0.01));
+    });
+
+    test('contrastRatio is symmetric (white vs black)', () {
+      expect(white.contrastRatio(black), closeTo(21.0, 0.01));
+    });
+
+    test('contrastRatio of identical colors is 1.0', () {
+      expect(white.contrastRatio(white), closeTo(1.0, 1e-9));
+      expect(black.contrastRatio(black), closeTo(1.0, 1e-9));
+    });
+
+    test('black on white meets WCAG AA at normal text', () {
+      expect(black.meetsWcagAA(white), isTrue);
+      expect(white.meetsWcagAA(black), isTrue);
+    });
+
+    test('black on white meets WCAG AAA at normal text', () {
+      expect(black.meetsWcagAAA(white), isTrue);
+      expect(white.meetsWcagAAA(black), isTrue);
+    });
+
+    test('black on white meets WCAG AA at large text', () {
+      expect(black.meetsWcagAA(white, largeText: true), isTrue);
+    });
+
+    test('black on white meets WCAG AAA at large text', () {
+      expect(black.meetsWcagAAA(white, largeText: true), isTrue);
+    });
+
+    test('white on white fails WCAG AA', () {
+      expect(white.meetsWcagAA(white), isFalse);
+    });
+
+    test('white on white fails WCAG AAA', () {
+      expect(white.meetsWcagAAA(white), isFalse);
+    });
+  });
+
   group('SpacingToken', () {
     test('creates with value', () {
       final token = SpacingToken(value: 16.0);
